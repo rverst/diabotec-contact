@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1, maximum-scale=1"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta charset="utf-8">
+    <title>Kontakt</title>
+    <link rel="stylesheet" href="https://api.chayns.net/css/v4.2/">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="tapp">
+    <div id="intro" class="tapp__intro">
+        <h1>Kontakt</h1>
+        <p>
+            Um uns eine Nachricht zu hinterlassen, nutzen Sie unser Kontaktformular oder schicken Sie uns eine E-Mail.
+        </p>
+    </div>
+    <div class="tapp__content">
+        <div class="grid">
+            <form id="email-frm">
+                <div class="grid__item"><input name="name" class="input" type="text" placeholder="Name" required></div>
+                <div class="grid__item"><input name="email" class="input" type="email" placeholder="E-Mail"></div>
+                <div class="grid__item"><input name="phone" class="input" type="tel" placeholder="Telefon"></div>
+                <div class="grid__item"><input name="subject" class="input" type="text" placeholder="Betreff" required></div>
+                <div class="grid__item"><textarea name="message" class="input" placeholder="Ihre Nachricht" type="text" required></textarea></div>
+                <div class="grid__item">
+                    <div style="text-align: center">
+                        <button id="send-btn" class="button">Absenden</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--Load the js chayns API-->
+<script src="https://api.chayns-static.space/js/v4.0/chayns.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+    const txt1 = 'Beim Initialisieren des Formulars ist leider ein Fehler aufgetreten. ';
+    const txt2 = 'Beim Senden des Formulars ist leider ein Fehler aufgetreten. ';
+    const txt3 = 'Schicken Sie uns nach Möglichkeit bitte eine E-Mail, oder versuchen Sie es später noch einmal.';
+
+    const setup = (ok) => {
+        const frm = document.getElementById('email-frm');
+        const btn = document.getElementById('send-btn');
+        const els = document.getElementsByClassName('input');
+
+        if (!ok) {
+            const int = document.getElementById('intro');
+            int.children[0].innerHTML = "Fehler";
+            int.children[1].innerHTML = txt1 + txt3;
+
+            for (const el of els) {
+                el.setAttribute('disabled', '');
+                btn.classList.add('button--disabled');
+            }
+            return;
+        }
+
+        const clear = () => {
+            for (const el of els) {
+                el.value = '';
+                btn.innerHTML = 'Absenden';
+            }
+        }
+
+        const error = () => {
+            chayns.dialog.alert('Fehler', txt2 + txt3);
+        }
+
+        if (chayns.env.user !== undefined) {
+            document.getElementsByName('name')[0].value = chayns.env.user.name;
+        }
+
+        emailjs.init('user_kE7Jv1VRmENZb4wCxu718');
+        frm.onsubmit = (e) => {
+            e.preventDefault();
+            btn.innerHTML = 'Sende...';
+            chayns.showWaitCursor();
+            emailjs.sendForm('mailcow_verst_eu', 'diabotec_contact_form', '#email-frm')
+                .then(response => {
+                    if (response.hasOwnProperty('status') && response.status === 200) {
+                    } else {
+                        console.log("FAILED", response);
+                        error();
+                    }
+                }).catch(error => {
+                console.log("ERROR", error);
+                error();
+            }).then(() => {
+                chayns.hideWaitCursor();
+                clear();
+            });
+        }
+    };
+
+    const init = () => {
+        if (window.chayns === undefined) {
+            setup(false);
+            return;
+        }
+        chayns.ready.then(() => {
+            setup(true);
+        }).catch(() => {
+            setup(false);
+        });
+    };
+
+    init();
+</script>
+</body>
+</html>

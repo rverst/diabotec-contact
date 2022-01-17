@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "serve": "cross-env NODE_ENV=development live-server ./public",
+    "production": "",
+    "start": "npm run serve"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "live-server": "^1.2.1"
+  },
+  "dependencies": {
+    "@emailjs/browser": "^3.4.0"
+  }
+}
