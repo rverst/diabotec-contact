@@ -6,9 +6,9 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "live-server": "^1.2.1"
+    "live-server": "^1.2.2"
   },
   "dependencies": {
-    "@emailjs/browser": "^3.4.0"
+    "@emailjs/browser": "^3.12.1"
   }
 }
